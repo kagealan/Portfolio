@@ -31,9 +31,9 @@ const name = '/vite-deploy'
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-          <Route exact path={`${name}/Home`} component={Home}/>
-          <Route exact path={`${name}`}>
-            <Redirect to={`${name}/Home`}/>
+          <Route exact path={`${name}`} component={Home}/>
+          <Route exact path={`/`}>
+            <Redirect to={`${name}`}/>
           </Route>
       </IonRouterOutlet>
     </IonReactRouter>
