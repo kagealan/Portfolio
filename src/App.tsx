@@ -26,14 +26,14 @@ import Home from './pages/Home';
 setupIonicReact();
 
 const App: React.FC = () => {
-
+const name = '/vite-deploy'
   return(
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-          <Route exact path='/Home' component={Home}/>
-          <Route exact path='/'>
-          <Redirect to='/Home'/>
+          <Route exact path={`${name}/Home`} component={Home}/>
+          <Route exact path={`${name}`}>
+            <Redirect to={`${name}/Home`}/>
           </Route>
       </IonRouterOutlet>
     </IonReactRouter>
