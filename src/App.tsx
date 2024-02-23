@@ -26,7 +26,7 @@ import Home from './pages/Home';
 setupIonicReact();
 
 const App: React.FC = () => {
-const name = '/vite-deploy'
+const name = '/Portfolio'
   return(
   <IonApp>
     <IonReactRouter>
