@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     legacy()
   ],
-  base: "/vite-deploy",
+  base: "/vite-deploy/",
 })
