@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     legacy()
   ],
-  base: "./Portfolio",
+  base: "./Portfolio/",
 })
