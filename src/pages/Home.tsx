@@ -379,26 +379,24 @@ const Home: React.FC = () => {
         }
         
     }
-    useEffect(()=>{
-        console.clear()
-        console.log(import.meta.env.BASE_URL)
-       iPv4()
-    },[])
-    const [bgC,setBgC] = useState(true)
+    // useEffect(()=>{
+    //     console.clear()
+    //     console.log(import.meta.env.BASE_URL)
+    //    iPv4()
+    // },[])
+    const [bgC,setBgC] = useState(false)
     const [Img,setImg] = useState(0)
-    useEffect(()=>{
-        console.log(Img)
-    },[Img])
+    
     return (
         <IonPage>
             <IonContent fullscreen>
                 <main className='h-full w-full font-[Poppins] overflow-hidden flex justify-center items-center p-5' style={{backgroundImage:'url(/Portfolio/Image/bg5.png)',backgroundSize:'cover'}}>
                     <AnimatePresence>
-                        {bgC && <motion.span className="opacity-[.5] rounded-lg w-[30em] overflow-hidden aspect-video bg-sky-500/25 flex absolute left-10">
+                        {bgC && <motion.span initial={{opacity:0}} animate={{opacity:.5}} exit={{opacity:0}} className="opacity-[.5] rounded-lg w-[30em] overflow-hidden aspect-video bg-sky-500/25 flex absolute left-10">
                             <motion.span whileHover={{opacity:1}} className="opacity-0 w-[10%] h-full bg-gradient-to-r from-gray-600 to-transparent absolute" onClick={()=>setImg(p=>Img > 0 ? p-1 : Img)}></motion.span>
                             <motion.span whileHover={{opacity:1}} className="opacity-0 w-[10%] h-full bg-gradient-to-l from-gray-600 to-transparent absolute right-0" onClick={()=>setImg(p=>Img < 6 ? p+1 : Img)}></motion.span>
                             <span className="w-full h-full bg-no-repeat bg-center transition-all transition-duration-500" style={{backgroundImage:`url(/Portfolio/Image/bgI${Img}.jpg`,backgroundSize:'contain'}}></span>
-                            {/* <img src='/Portfolio/Image/bg6.jpg'></img> */}
+                           
                         </motion.span>}
 
                     </AnimatePresence>
