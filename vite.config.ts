@@ -1,12 +1,15 @@
 import legacy from '@vitejs/plugin-legacy'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    legacy()
-  ],
-  base: "/Portfolio/",
+export default defineConfig( ({command,mode}) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return{
+      plugins: [
+        react(),
+        legacy()
+      ],
+      base: env.BASE_URL,
+  }
 })

@@ -26,14 +26,14 @@ import Home from './pages/Home';
 setupIonicReact();
 
 const App: React.FC = () => {
-const name = '/Portfolio'
+
   return(
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-          <Route exact path={`${name}`} component={Home}/>
-          <Route exact path={`/`}>
-            <Redirect to={`${name}`}/>
+          <Route exact path='/Portfolio' component={Home}/>
+          <Route exact path='/'>
+            <Redirect to='/Portfolio'/>
           </Route>
       </IonRouterOutlet>
     </IonReactRouter>
