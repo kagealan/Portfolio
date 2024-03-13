@@ -1,415 +1,192 @@
 import { IonContent, IonPage } from "@ionic/react"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, useScroll } from "framer-motion"
 import favicon from '/favicon.png'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const Home: React.FC = () => {
-    const year = () => {
-        var soluce = -1
-        var year = 1905
-        var a = 1, b = 100
-        var k = 1
-        while(soluce === -1){
-            if(year >= a && year <= b)
-                soluce = k
-            else {
-                k++
-                a += 100
-                b += 100
-            }
-        }
-        return soluce
-    }
-    const palindrome = () => {
-        var inputString = 'aad'
-        console.clear()
-        for(let i=0;i<inputString.length/2;i++)
-            if(inputString[i] !== inputString[inputString.length-1 - i]) return console.log(false)
-        return console.log(true)
-    }
-    const produitAdj = () => {
-        var inputArray = [3, 6, -2, -5, 7, 3]
-        var result = -1
-        for(let i = 0;i<inputArray.length-1;i++)
-            if(result < inputArray[i]*inputArray[i+1])
-                result = inputArray[i]*inputArray[i+1]
-        console.log(result)
-    }
-    const polygon = () => {
-        console.clear()
-       var n = 2
-       var a = 3
-       var s = 1
-       for(let i=0;i<n;i++)
-        s += Math.pow(3,i)
-       console.log(s)
-    }
-    const statue = () => {
-        var statues = [6, 2, 3, 8]
-        const staTri = statues.sort()
-        var t = new Array()
-        var k = 0
-        for(let i = staTri[0] ;i<staTri[staTri.length-1];i++){
-            if(i !== staTri[k]){
-                t.push(i)
-                
-            }else k++
-        }
-        return t.length
-    }
-    const croissant = () => {
-        var sequence = [1, 3 , 2, 1]
-        const checkV = (sequence:number[]) => {
-            var ind = -1
-            for( let i=0;i<sequence.length-1;i++){
-                if(sequence[i] >= sequence[i+1]){
-                    return  i
+ 
+
+    const ImageGen = () => {
+        const [img,setImg] = useState(0)
+        const [isGenerated,setIsGenerated] = useState(false)
+        const [generatedImage,setGeneratedImage] = useState<{photo:string,altText:string}|null>(null)
+        const [prompt,setPrompt] = useState('')
+        const generateImage = async (prompt:string,setPrompt:React.Dispatch<React.SetStateAction<string>>) => {
+            if(prompt){
+                try{
+                    setIsGenerated(true)
+                    const response = await fetch(
+                        'http://localhost:8080/api',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type' : 'application/json',
+                            },
+                            body: JSON.stringify({prompt})
+                        }
+                    )
+                    const data = await response.json()
+                    setGeneratedImage({
+                        photo: `data:image/jpeg;base64,${data.photo}`,
+                        altText:prompt
+                    })
+                }catch (err) {
+                    alert(err)
+                } finally {
+                    setPrompt('')
+                    setIsGenerated(false)
                 }
-            }
-            return ind
-        }
-        var ind = checkV(sequence)
-        var lengt = sequence.length-1
-        var sq1 = sequence.filter((p,i)=> i!== ind)
-        var sq2 = new Array()
-        if(ind < lengt)
-        sq2 = sequence.filter((p,i)=> i!== ind+1)
-        if(checkV(sq1) === -1) return console.log(true)
-        if(checkV(sq2) === -1) return console.log(true)
-        return console.log(false)
-    }
-    const coloneG = () => {
-        var matrix = [[0, 1, 1, 2], 
-        [0, 5, 0, 0], 
-        [2, 0, 3, 3]]
-        for(let i=0;i<matrix.length;i++){
-            for(let j=0;j<matrix[0].length;j++){
-                if(matrix[i][j] === 0){
-                    if(i<matrix.length-1)
-                        for(let k=i;k<matrix.length;k++)
-                            matrix[k][j] = 0
-                }
+            }else {
+                alert('Please provide proper prompt')
             }
         }
-        var soluce = 0
-        for(let i=0;i<matrix.length;i++)
-            for(let j=0;j<matrix[i].length;j++){
-                if(matrix[i][j])
-                    soluce += matrix[i][j]
-            }
-        return soluce
-    }
-    const graphRoutePoss = () => {
-        var roadRegister = [[false, true,  false, false, false, false, false],
-        [true,  false, false, false, false, false, false],
-        [false, false, false, true,  false, false, false],
-        [false, false, true,  false, false, false, false],
-        [false, false, false, false, false, false, true ],
-        [false, false, false, false, true,  false, false],
-        [false, false, false, false, false, true,  false]]
-        var routeI = new Array()
-        var routeJ = new Array()
-
-        for(let i=0;i<roadRegister.length;i++){
-            for(let j=0;j<roadRegister[i].length;j++){
-                if(roadRegister[i][j]){
-                    routeI.push(i)
-                    routeJ.push(j)
-
-                }
-            }
-        }
-        routeI = routeI.sort()
-        routeJ = routeJ.sort()
-        for(let i=0;i<routeI.length;i++)
-            if(routeI[i] !== routeJ[i]) return false
-        return true
-    }
-    const cityRoads = () => {
-       var cities= 4
-        var roads=
-        [[0,1], 
-        [1,2], 
-        [2,0]]
-        var tab = new Array()
-
-        for(let i=0;i<cities;i++)
-            for(let j=0;j<cities;j++)
-                if(i!==j) 
-                    if(!tab.includes(`${j},${i}`))    
-                tab.push(`${i},${j}`)
-        
-        var tabRoadS = new Array()
-        for(let i=0;i<roads.length;i++){
-            tabRoadS.push(`${roads[i][0]},${roads[i][1]}`)
-            tabRoadS.push(`${roads[i][1]},${roads[i][0]}`)
-        }
-
-        for(let i=0;i<tabRoadS.length;i++){
-            for(let j=0;j<tab.length;j++){
-                if(tabRoadS[i] === tab[j])
-                    tab = tab.filter((p,k)=> k !== j)
-            }
-        }
-        var tabF = new Array()
-        for(let i=0;i<tab.length;i++){
-            const t = tab[i].split(',')
-            tabF.push([parseInt(t[0]),parseInt(t[1])])
-        }
-
-
-       return tabF
-
-    
-    }
-    const phoneCall = () => {
-        var min1 = 10,min2_10 = 1,min11 = 2,s = 22,cpt=0
-        var k=0
-        while(cpt<s){
-            if(k === 0) cpt = min1
-            else if(k>0 && k<10) cpt+=min2_10
-            else cpt += min11
-            k++
-        }
-        if(cpt>s) k--
-        console.log(k)
-        return k
-    }
-    const kapsnackL = () => {
-        var value1= 15,
-            weight1= 2,
-            value2= 20,
-            weight2= 3,
-            maxW= 2
-        
-        if(weight1 <= maxW || weight2 <= maxW){
-            if(weight1 + weight2  <= maxW){
-                return console.log(value1+value2)
-            }else if(value1 > value2) return console.log(value1)
-            else return console.log('dsd',value2)
-
-        }else console.log(0)
-            
-
-    }
-    const infiniteLoop = () => {
-        var t= 1,
-        width= 3,
-        precision= 0
-        var str = t.toFixed(precision)
-        var strF = ''
-        var lng = Math.ceil(width/2)
-        var lngStr = Math.ceil(str.length/2)
-        var ln = lng - lngStr
-        var k = 0
-        for(let i=0;i<width;i++){
-            if(i >= ln && i < str.length+ln ){
-                strF += str[k]
-                k++
-            }else  strF += ' '
-        }
-
-        return strF
-
-        
-    }
-    const Tennis = () => {
-        var score1 = 7,score2 = 6
-        const tn = () => {
-            if(score1 === score2) return false
-            if(score1 > 7 || score2 > 7) return false
-            if(score1 < 6 && score2 < 6) return false
-            if(score1 === 7)
-                if(score1 - score2 < 2)
-                    return true
-                else return false
-            if(score2 === 7) 
-            if(score2 - score1 < 2)
-                    return true
-                else return false
-            if(score1 === 6 )
-                if(score1 - score2 > 1 ) return true
-                else return false
-            if(score2 === 6 )
-                if(score2 - score1 > 1 ) return true
-                else return false
-            
-
-        }
-        console.log(tn())
-    }
-    const k_th = () => {
-        var n = 37,k = 3
-        var t = (n).toString(2)
-        console.log(parseInt(((n).toString(2)).slice(0, -k) + '0' + ((n).toString(2)).slice(-k + 1), 2))
-    }
-    const reverseInParenthese = () => {
-        var t = '(ab)(vbar)a'
-        var k = 0
-        var f = 0
-
-        var cpt = 0
-        for(let i=0;i<t.length;i++)
-            if(t[i] === '(')
-                cpt++
-        var d = 0
-
-        while(d < cpt){
-            console.log('d : ',d,t)
-
-            for(let i=0;i<t.length;i++)
-            if(t[i] === '('){
-                k = i
-            }else if( t[i] === ')'){
-                f = i
-                var t1 = t.slice(0,k)
-                var tCh = t.slice(k+1,f).split('').reverse().join('')
-                var t2 = t.slice(f+1)
-                t = t1+tCh+t2
-                break
-            }
-            d++
-        }
-
-        // console.log(t.split('('))
-
-    }
-    const team = () => {
-        var a = [50, 60, 60, 45, 70]
-        var team = [0,0]
-        for(let i=0;i<a.length;i++)
-            if(i % 2) team[1] += a[i]
-            else team[0] += a[i]
-        
-        console.log(team)
-    }
-    const AddBorder = () => {
-        var picture = ['abc','ded']
-        var length = picture[0].length+2
-        var t = ''
-        for(let i=0;i<length;i++)
-            t += '*'
-        for(let i=0;i<picture.length;i++)
-            picture[i] = '*'+picture[i]+'*'
-
-        picture.push(t)
-        picture.unshift(t)
-
-        console.log(t)
-        picture[picture.length]
-        console.log(picture)
-    }
-    const arrayChange = () => {
-        var inputArray = [-1000, 0, -2, 0]
-        var tab = [...inputArray]
-        var k = 0
-        for(let i=0;i<inputArray.length-1;i++){
-            if(tab[i+1] <= tab[i]){
-                while(tab[i+1] <= tab[i]){
-                    tab[i+1] += 1
-                    k += 1
-                }
-            }
-        }
-    console.log(k)
-
-    }
-    const palindromeRearrange = () => {
-        var inputString = 'zaa'
-        var length = inputString.length
-        var tab = [...inputString] 
-
-        if( length % 2 === 0){
-            var t:string[] = []
-            for(let i=0;i<length;i++){
-                if(!t.includes(tab[i]))
-                    t.push(tab[i])
-            }
-            for(let i=0;i<t.length;i++){
-                var cpt = 0
-                for(let j=0;j<length;j++){
-                    if(t[i] === tab[j])
-                        cpt++
-                }
-                if(cpt % 2 !== 0) return false
-            }
-            return true
-        }else {
-            var t:string[] = []
-            for(let i=0;i<length;i++){
-                if(!t.includes(tab[i]))
-                    t.push(tab[i])
-            }
-                var nbrI = 0
-                for(let i=0;i<t.length;i++){
-                    var cpt = 0
-                    for(let j=0;j<length;j++){
-                        if(t[i] === tab[j])
-                            cpt++
+        return(
+            <span className="flex flex-col gap-2">
+            <textarea onChange={e => setPrompt(e.target.value)} className="w-full p-1 focus:bg-slate-800 transition outline-none" placeholder="Entrer votre prompt ici..."></textarea>
+            <span className="aspect-square rounded h-[482px] bg-sky-900/25 flex justify-center items-center">
+                <AnimatePresence>
+                    { generatedImage ? <motion.span className="w-full h-full flex">
+                        <img src={generatedImage.photo} alt={generatedImage.altText}></img>
+                        </motion.span> : isGenerated ? <span className='p-2 bg-gray-900/75 rounded'>Generation Image en cours...</span>:
+                            <span className="p-5 bg-gray-900/50 rounded ">Generer votre Image</span>
                     }
-                    if(cpt % 2 !== 0){
-                        nbrI++
-                    }
-                    if(nbrI > 1) return false
-                }
-                return true
-                
-            }
-        
-    }
-    const iPv4 = () => {
-        var inputString = '172.16.254.1'
-        var tab = [...inputString].join('').split('.')
-        
-        if(tab.length !== 4)
-            return false
-        else{
-            for(let i=0;i<tab.length;i++)
-                if(isNaN(Number(tab[i])) || parseInt(tab[i]) > 255 ) return false
+                    
+                </AnimatePresence>
+            </span>
+            <button className="p-2 bg-sky-700 rounded" onClick={()=> generateImage(prompt,setPrompt)}>Generate Image</button>
+            {/* <button className="p-2 bg-sky-700 rounded" onClick={()=> setGeneratedImage({photo:'Image/bgI0.jpg',altText:'df'})}>Generate Image</button> */}
 
-            for(let i=0;i<tab.length;i++){
-                for(let j=0;j<tab[i].length;j++){
-                    if(tab[i].split('').length > 1){
-                        if(tab[i][0] === '0') return false
-                    }
-                }
-            }
-            return true
-            
-        }
-        
+        </span>
+        )
     }
-    // useEffect(()=>{
-    //     console.clear()
-    //     console.log(import.meta.env.BASE_URL)
-    //    iPv4()
-    // },[])
-    const [bgC,setBgC] = useState(false)
-    const [Img,setImg] = useState(0)
-    
-    return (
-        <IonPage>
-            <IonContent fullscreen>
-                <main className='h-full w-full font-[Poppins] overflow-hidden flex justify-center items-center p-5' style={{backgroundImage:'url(/Portfolio/Image/bg5.png)',backgroundSize:'cover'}}>
-                    <AnimatePresence>
-                        {bgC && <motion.span initial={{opacity:0}} animate={{opacity:.5}} exit={{opacity:0}} className="opacity-[.5] rounded-lg w-[30em] overflow-hidden aspect-video bg-sky-500/25 flex absolute left-10">
-                            <motion.span whileHover={{opacity:1}} className="opacity-0 w-[10%] h-full bg-gradient-to-r from-gray-600 to-transparent absolute" onClick={()=>setImg(p=>Img > 0 ? p-1 : Img)}></motion.span>
-                            <motion.span whileHover={{opacity:1}} className="opacity-0 w-[10%] h-full bg-gradient-to-l from-gray-600 to-transparent absolute right-0" onClick={()=>setImg(p=>Img < 6 ? p+1 : Img)}></motion.span>
-                            <span className="w-full h-full bg-no-repeat bg-center transition-all transition-duration-500" style={{backgroundImage:`url(/Portfolio/Image/bgI${Img}.jpg`,backgroundSize:'contain'}}></span>
-                           
-                        </motion.span>}
-
-                    </AnimatePresence>
-                    <span className=" absolute w-5 aspect-square rounded-full bg-sky-700/20 left-10 bottom-10" onClick={()=>setBgC(!bgC)}>
-                        
+    const scrollF = (n:number) => {
+        useScroll()
+    }
+    const Page1 = () => {
+        return(
+            <section id='page1' className="w-full h-[100vh] bg-sky-600 flex items-start justify-center p-5">
+                <button className="bg-pink-600 p-2 rounded outline-none" onClick={()=> scrollF(1)}>Scroll to Page 2</button>
+            </section>
+        )
+    }
+    const Page2 = () => {
+        return(
+            <section id='page2' className="w-full h-[100vh] bg-pink-600 flex items-start justify-center p-5">
+                <button className="bg-sky-600 p-2 rounded outline-none" onClick={()=> scrollF(2)}>Scroll to Page 1</button>
+            </section>
+        )
+    }
+    const LandingPage = () => {
+        const Header = () => {
+            const tab = ['Home','Portfolio','Blog','Contact']
+            return(
+                <header className="h-[7em] max-w-[1280px] z-20 w-full flex justify-around">
+                    <span className="flex items-center gap-2">
+                        <span className="relative flex items-center">
+                        <img width='25em' src='/Portfolio/Image/Logo.png'></img>
+                        <span className="w-2 aspect-square bg-[#148698] rotate-45 absolute right-[-1em] bottom-[1px]"></span>
+                        </span>
                     </span>
-                    <motion.div animate={{scale:[.8,1],transition:{duration:1,ease:'easeIn',repeat:Infinity,repeatType:'reverse'}}} className="gap-2 w-[5em] aspect-square rounded-full flex items-center justify-center">
-                        <img src={`/Portfolio/favicon.png`} alt='vite logo'></img>
-                        <span className="text-sky-700 font-bold">
-                            Sokafy ny vava bab a!!
+                    <span className="flex gap-2 items-center">
+                        {tab.map((p,i)=><span key={i} className="relative transition before:absolute before:w-0 hover:before:w-[80%] before:transition-all hover:text-gray-400 before:bottom-0 before:h-[2px] before:bg-sky-700 cursor-pointer w-[6em] py-2 text-center">
+                            {p}
+                        </span>)}
+                        <hr className="h-[1.5em] border-l border-gray-500"/>
+                        <span className='pl-2 flex cursor-pointer fill-slate-400 hover:fill-sky-600 transition'>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+                                <path d="M16 4C9.3844276 4 4 9.3844276 4 16C4 22.615572 9.3844276 28 16 28C22.615572 28 28 22.615572 28 16C28 9.3844276 22.615572 4 16 4 z M 16 6C21.534692 6 26 10.465308 26 16C26 21.027386 22.311682 25.161277 17.488281 25.878906L17.488281 18.916016L20.335938 18.916016L20.783203 16.023438L17.488281 16.023438L17.488281 14.443359C17.488281 13.242359 17.882859 12.175781 19.005859 12.175781L20.810547 12.175781L20.810547 9.6523438C20.493547 9.6093438 19.822688 9.515625 18.554688 9.515625C15.906688 9.515625 14.355469 10.913609 14.355469 14.099609L14.355469 16.023438L11.632812 16.023438L11.632812 18.916016L14.355469 18.916016L14.355469 25.853516C9.6088556 25.070647 6 20.973047 6 16C6 10.465308 10.465308 6 16 6 z" />
+                            </svg>
+                        </span>
+                        <span className="flex cursor-pointer  fill-slate-400 hover:fill-sky-600 transition">
+                            <svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+                                <path d="M24.503906 7.503906C22.246094 5.246094 19.246094 4 16.050781 4C9.464844 4 4.101563 9.359375 4.101563 15.945313C4.097656 18.050781 4.648438 20.105469 5.695313 21.917969L4 28.109375L10.335938 26.445313C12.078125 27.398438 14.046875 27.898438 16.046875 27.902344L16.050781 27.902344C22.636719 27.902344 27.996094 22.542969 28 15.953125C28 12.761719 26.757813 9.761719 24.503906 7.503906 Z M 16.050781 25.882813L16.046875 25.882813C14.265625 25.882813 12.515625 25.402344 10.992188 24.5L10.628906 24.285156L6.867188 25.269531L7.871094 21.605469L7.636719 21.230469C6.640625 19.648438 6.117188 17.820313 6.117188 15.945313C6.117188 10.472656 10.574219 6.019531 16.054688 6.019531C18.707031 6.019531 21.199219 7.054688 23.074219 8.929688C24.949219 10.808594 25.980469 13.300781 25.980469 15.953125C25.980469 21.429688 21.523438 25.882813 16.050781 25.882813 Z M 21.496094 18.445313C21.199219 18.296875 19.730469 17.574219 19.457031 17.476563C19.183594 17.375 18.984375 17.328125 18.785156 17.625C18.585938 17.925781 18.015625 18.597656 17.839844 18.796875C17.667969 18.992188 17.492188 19.019531 17.195313 18.871094C16.894531 18.722656 15.933594 18.40625 14.792969 17.386719C13.90625 16.597656 13.304688 15.617188 13.132813 15.320313C12.957031 15.019531 13.113281 14.859375 13.261719 14.710938C13.398438 14.578125 13.5625 14.363281 13.710938 14.1875C13.859375 14.015625 13.910156 13.890625 14.011719 13.691406C14.109375 13.492188 14.058594 13.316406 13.984375 13.167969C13.910156 13.019531 13.3125 11.546875 13.0625 10.949219C12.820313 10.367188 12.574219 10.449219 12.390625 10.4375C12.21875 10.429688 12.019531 10.429688 11.820313 10.429688C11.621094 10.429688 11.296875 10.503906 11.023438 10.804688C10.75 11.101563 9.980469 11.824219 9.980469 13.292969C9.980469 14.761719 11.050781 16.183594 11.199219 16.382813C11.347656 16.578125 13.304688 19.59375 16.300781 20.886719C17.011719 21.195313 17.566406 21.378906 18 21.515625C18.714844 21.742188 19.367188 21.710938 19.882813 21.636719C20.457031 21.550781 21.648438 20.914063 21.898438 20.214844C22.144531 19.519531 22.144531 18.921875 22.070313 18.796875C21.996094 18.671875 21.796875 18.597656 21.496094 18.445313Z" />
+                            </svg>
+                        </span>
+                    </span>
+                </header>
+            )
+        }
+        const Section = () => {
+            return(
+                <section className="flex-1 w-full flex px-2 z-10 items-center">
+                    <span className="flex-1 flex flex-col justify-start items-center">
+                        <span className=' flex justify-center w-full items-center h-full '>
+                            <span className="flex gap-5 flex-col items-start justify-around">
+                                <span className="flex flex-col font-bold text-3xl">
+                                    <label>Alain</label>
+                                    <label className="flex items-center relative">Ralantoaritsimba<span className="absolute right-[-15px] rotate-45 bottom-[13px] bg-sky-700 w-2 aspect-square"></span></label>
+                                </span>
+                                <hr className="w-[15%] relative bottom-[-15px] border-2 border-sky-700"/>
+                                <span className="flex flex-col text-sm gap-1">
+                                    <span className="flex items-center gap-2">
+                                        <label>Instagram</label>
+                                        <hr className="h-3 border-l"/>
+                                        <label>LinkedIn</label>
+                                    </span>
+                                    <span className="flex items-center gap-2">
+                                        <label>Behance</label>
+                                        <hr className="h-3 border-l"/>
+                                        <label>Dribble</label>
+                                    </span>
+                                </span>
+                                <span className="border-2 py-2 px-3 hover:border-sky-600 hover:text-sky-600 cursor-pointer border-sky-700 text-sky-700 font-bold">CONTACT ME</span>
+                            </span>
 
                         </span>
-                    </motion.div>
+                       
+                        
+                    </span>
+                    <span className="flex-1 h-full flex items-center justify-center">
+                        <span className="relative w-[80%] aspect-square overflow-hidden opacity-60 border-2 border-gray-500 rounded-full flex items-center justify-center">
+                            <img className='w-[85%] absolute bottom-0' src='/Portfolio/Image/qwer.png'></img>
+                        </span>
+                    </span>
+                    <span className="flex-1 h-full flex-col flex justify-evenly items-center">
+                        <span className="w-full flex gap-4 justify-center">
+                            <span className="gap-4 flex flex-col">
+                                <span className="flex flex-col text-2xl font-bold">
+                                    <label className="mb-3 text-sm text-sky-700 font-bold">INTRODUCTION</label>
+                                    <label>UI/UX Designer,</label>
+                                    <label>Full Stack Web</label>
+                                    <label>Developer</label>
+                                </span>
+                                <span>Lorem ipsum</span>
+                                <span className="text-sky-700 cursor-pointer">Learn more |</span>
+
+                            </span>
+                        </span>
+                       
+                    </span>
+
+                </section>
+            )
+        }
+        const Absolute = () => {
+            return(
+                <span className="z-0 w-full h-full absolute overflow-hidden">
+                    <span className="absolute w-[40em] aspect-square border border-sky-700 rotate-45 right-0"></span>
+                    <span className="absolute w-[30em] aspect-square rounded-full left-[-5em] border-4 border-sky-700 bottom-[-10em]"></span>
+                    <span className="absolute w-[10em] aspect-square rounded-full top-5 left-[10em] border-sky-700 border-2"></span>
+                    <motion.span animate={{rotate:[0,90],transition:{delay:1,repeatType:'loop',repeatDelay:.8,repeat:Infinity}}} className="absolute w-[5em] aspect-square border-2 border-sky-700 bottom-[15%] right-[40%]"></motion.span>
+                </span> 
+            )
+        }
+        return(
+            <section className="min-w-[720px] w-[90%] md:w-[70%] aspect-video flex flex-col items-center bg-gray-900 rounded-2xl shadow-[15px_15px_5px_1px] shadow-gray-900/50">
+                <Header/>
+                <Section/>
+                {/* <Absolute/> */}
+            </section>
+        )
+    }
+
+
+    return (
+
+        <IonPage>
+            <IonContent fullscreen>
+                <main className='select-none bg-gradient-to-br from-orange-400 to-pink-900 w-full h-full font-[Poppins] flex justify-center items-center text-gray-300'>
+                    <LandingPage/>
                 </main>
             </IonContent>
         </IonPage>
